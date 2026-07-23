@@ -124,7 +124,8 @@ accounts[key];
 
 account.sort(
 (a,b)=>
-new Date(a.Date)
+new Date(a["Monthly Dates"])
+account[0].Date
 -
 new Date(b.Date)
 );
@@ -133,15 +134,13 @@ new Date(b.Date)
 
 let current =
 Number(
-account[account.length-1].Balance
+account[account.length-1].Value
 );
-
-
-
-let previous =
+  let previous =
 Number(
-account[account.length-2]?.Balance || current
+account[account.length-2]?.Value || current
 );
+
 
 
 
