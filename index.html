@@ -1,177 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Finance Dashboard</title>
+<title>Household Finance Dashboard</title>
 
 <link rel="stylesheet" href="style.css">
 
+<!-- Charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Excel Reader -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="app.js"></script>
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
+
 <header>
 
-<h1>💰 Finance Dashboard</h1>
+<h1>💰 Household Finance Dashboard</h1>
 
-<p>Your personal savings tracker</p>
+<p>Savings, ISA and budget tracker</p>
 
-<input type="file" id="excelFile" accept=".xlsx,.xls">
+
+<input 
+type="file" 
+id="excelFile" 
+accept=".xlsx,.xls">
+
 
 </header>
 
 
+
 <section class="cards">
 
+
 <div class="card">
+
 <h3>Total Savings</h3>
-<h2>£24,150</h2>
-  <h2 id="savings">£0</h2>
+
+<h2 id="savings">
+£0
+</h2>
+
 </div>
+
 
 
 <div class="card">
-<h3>This Month</h3>
-<h2>+£635</h2>
+
+<h3>Accounts</h3>
+
+<h2 id="accountCount">
+0
+</h2>
+
 </div>
+
 
 
 <div class="card">
-<h3>Goals</h3>
-<h2>3 Active</h2>
+
+<h3>Owners</h3>
+
+<h2 id="ownerCount">
+0
+</h2>
+
 </div>
+
+
+
+<div class="card">
+
+<h3>Last Updated</h3>
+
+<h2 id="updated">
+-
+</h2>
+
+</div>
+
 
 </section>
+
+
+
+
+
 <section class="panel">
 
-<h2>Account Performance</h2>
+
+<h2>Savings Accounts</h2>
+
 
 <table id="accountsTable">
 
+
 <tr>
-<th>Owner</th>
+
+<th>Who</th>
+
 <th>Account</th>
-<th>Balance</th>
-<th>Monthly Change</th>
-<th>% Change</th>
+
+<th>Type</th>
+
+<th>Value</th>
+
 </tr>
+
 
 </table>
 
+
 </section>
+
+
+
+
 
 <section class="panel">
 
-<h2>Savings Growth</h2>
+
+<h2>Growth Overview</h2>
+
 
 <canvas id="savingsChart"></canvas>
 
-</section>
-
-
-<section class="goals">
-
-<h2>Savings Goals</h2>
-
-
-<div class="goal">
-
-<p>🏖 Holiday</p>
-
-<div class="progress">
-<span style="width:80%"></span>
-</div>
-
-<p>£4,800 / £6,000</p>
-
-</div>
-
-
-
-<div class="goal">
-
-<p>🚗 New Car</p>
-
-<div class="progress">
-<span style="width:55%"></span>
-</div>
-
-<p>£5,500 / £10,000</p>
-
-</div>
-
-
-
-<div class="goal">
-
-<p>🏡 House Deposit</p>
-
-<div class="progress">
-<span style="width:35%"></span>
-</div>
-
-<p>£12,300 / £35,000</p>
-
-</div>
-
 
 </section>
+
+
 
 
 
 <section class="panel">
 
-<h2>Recent Transactions</h2>
+
+<h2>AI Assistant</h2>
 
 
-<table>
-
-<tr>
-<th>Date</th>
-<th>Description</th>
-<th>Amount</th>
-</tr>
+<div class="chatbox">
 
 
-<tr>
-<td>23/07/2026</td>
-<td>Monthly Savings</td>
-<td>£500</td>
-</tr>
+<p>
+Ask questions about your finances:
+</p>
 
 
-<tr>
-<td>15/07/2026</td>
-<td>Holiday Fund</td>
-<td>£100</td>
-</tr>
+<input 
+type="text"
+placeholder="How much savings do we have?">
 
 
-<tr>
-<td>01/07/2026</td>
-<td>Interest</td>
-<td>£35</td>
-</tr>
+<button>
+Ask
+</button>
 
 
-</table>
+</div>
 
 
 </section>
 
 
+
 </div>
+
+
 
 
 <script src="app.js"></script>
 
+
 </body>
+
 </html>
