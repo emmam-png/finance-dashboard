@@ -6,8 +6,8 @@
 let financeData = {
 
     savings: [],
-    emmaBudget: [],
-    leeBudget: [],
+    emmasBudget: [],
+    leesBudget: [],
     outgoings: []
 
 };
