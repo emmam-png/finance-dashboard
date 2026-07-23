@@ -1,7 +1,6 @@
 let savingsData = [];
 
 
-
 document
 .getElementById("excelFile")
 .addEventListener("change", function(e){
@@ -10,7 +9,6 @@ document
 const file = e.target.files[0];
 
 const reader = new FileReader();
-
 
 
 reader.onload = function(event){
@@ -37,15 +35,16 @@ XLSX.utils.sheet_to_json(sheet);
 
 
 
+console.log("Savings loaded:", savingsData);
+
+
 displaySavings();
 
 
 }
 
 
-
 };
-
 
 
 reader.readAsBinaryString(file);
@@ -56,53 +55,21 @@ reader.readAsBinaryString(file);
 
 
 
-
 function displaySavings(){
 
 
-let accounts = {};
-
-
-
-savingsData.forEach(row=>{
-
-
-let key =
-row.Who +
-"-" +
-row["Type of Savings"];
-
-
-
-if(!accounts[key]){
-
-accounts[key]=[];
-
-}
-
-
-accounts[key].push(row);
-
-
-});
-
-
-
 let table =
-document.getElementById(
-"accountsTable"
-);
+document.getElementById("accountsTable");
 
 
 
 table.innerHTML = `
 
 <tr>
-<th>Owner</th>
+<th>Who</th>
 <th>Account</th>
-<th>Balance</th>
-<th>Change</th>
-<th>%</th>
+<th>Type</th>
+<th>Value</th>
 </tr>
 
 `;
@@ -113,49 +80,17 @@ let totalSavings = 0;
 
 
 
-Object.keys(accounts).forEach(key=>{
+savingsData.forEach(account=>{
 
 
-let account =
-accounts[key];
-
-
-// Sort by date
-
-
-account.sort(
-(a,b) =>
-new Date(a["Monthly Dates"]) - new Date(b["Monthly Dates"])
-);
-
-
-
-let current =
+let value =
 Number(
-account[account.length-1].Value
-);
-  let previous =
-Number(
-account[account.length-2]?.Value || current
+account["Value as of Date"]
 );
 
 
 
-
-let difference =
-current - previous;
-
-
-
-let percentage =
-previous ?
-((difference / previous)*100)
-:
-0;
-
-
-
-totalSavings += current;
+totalSavings += value;
 
 
 
@@ -166,20 +101,14 @@ table.insertRow();
 
 row.innerHTML = `
 
-<td>${account[0].Who}</td>
+<td>${account.Who}</td>
 
-<td>${account[0]["Type of Savings"]}</td>
+<td>${account.Account}</td>
 
-<td>
-£${current.toLocaleString()}
-</td>
+<td>${account["Type of Savings"]}</td>
 
 <td>
-£${difference.toLocaleString()}
-</td>
-
-<td>
-${percentage.toFixed(2)}%
+£${value.toLocaleString()}
 </td>
 
 `;
@@ -193,7 +122,7 @@ ${percentage.toFixed(2)}%
 document
 .getElementById("savings")
 .innerHTML =
-"£"+totalSavings.toLocaleString();
+"£" + totalSavings.toLocaleString();
 
 
 
