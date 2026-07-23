@@ -1,28 +1,54 @@
-
-// Wealth calculations
-
-
-function parseFinanceDate(value){
-
-    if(!value) return null;
+// Wealth Dashboard Engine
 
 
-    let parts = value.toString().split("/");
+function parseFinanceDate(value) {
 
 
-    if(parts.length !== 3){
+    if (!value) return null;
+
+
+    // Handle Excel date numbers
+
+    if (typeof value === "number") {
+
+        return new Date(
+            Math.round(
+                (value - 25569) * 86400 * 1000
+            )
+        );
+
+    }
+
+
+
+    let parts =
+        value.toString().split("/");
+
+
+
+    if (parts.length !== 3) {
         return null;
     }
 
 
-    let day = Number(parts[0]);
-    let month = Number(parts[1]) - 1;
-    let year = Number(parts[2]);
+
+    let day =
+        Number(parts[0]);
 
 
-    if(year < 100){
+    let month =
+        Number(parts[1]) - 1;
+
+
+    let year =
+        Number(parts[2]);
+
+
+
+    if (year < 100) {
         year += 2000;
     }
+
 
 
     return new Date(
@@ -32,6 +58,50 @@ function parseFinanceDate(value){
     );
 
 }
+
+
+
+
+
+function getAssetType(type){
+
+
+    type =
+    type.toLowerCase();
+
+
+
+    if(
+        type.includes("pension") ||
+        type.includes("sipp")
+    ){
+        return "Pension";
+    }
+
+
+
+    if(
+        type.includes("isa")
+    ){
+        return "ISA";
+    }
+
+
+
+    if(
+        type.includes("share") ||
+        type.includes("investment") ||
+        type.includes("crypto")
+    ){
+        return "Investments";
+    }
+
+
+
+    return "Cash";
+
+}
+
 
 
 
@@ -55,12 +125,13 @@ function calculateWealth(){
 
 
 
-    // Find date columns
-
     let dates =
     columns.filter(col => {
 
-        return parseFinanceDate(col) !== null;
+
+        return parseFinanceDate(col)
+        !== null;
+
 
     });
 
@@ -75,12 +146,21 @@ function calculateWealth(){
 
 
 
+    console.log(
+        "Sorted dates:",
+        dates
+    );
+
+
+
     let latest =
     dates[dates.length-1];
 
 
+
     let previous =
     dates[dates.length-2];
+
 
 
     let first =
@@ -88,9 +168,29 @@ function calculateWealth(){
 
 
 
-    let emmaTotal = 0;
-    let leeTotal = 0;
-    let jointTotal = 0;
+    console.log(
+        "Latest:",
+        latest,
+        "Previous:",
+        previous
+    );
+
+
+
+    let emma = 0;
+    let lee = 0;
+    let joint = 0;
+
+
+
+    let assetTotals = {
+
+        Cash:0,
+        ISA:0,
+        Investments:0,
+        Pension:0
+
+    };
 
 
 
@@ -103,40 +203,40 @@ function calculateWealth(){
 
     table.innerHTML = `
 
-    <tr>
-    <th>Owner</th>
-    <th>Account</th>
-    <th>Type</th>
-    <th>Current Value</th>
-    <th>Monthly Change</th>
-    <th>Monthly %</th>
-    <th>Total Growth %</th>
-    </tr>
+<tr>
+<th>Owner</th>
+<th>Account</th>
+<th>Type</th>
+<th>Category</th>
+<th>Value</th>
+<th>Monthly Change</th>
+<th>Monthly %</th>
+<th>Total %</th>
+</tr>
 
-    `;
+`;
 
 
 
-
-    rows.forEach(account=>{
+    rows.forEach(item=>{
 
 
         let current =
-        Number(account[latest]) || 0;
+        Number(item[latest]) || 0;
 
 
 
         let old =
-        Number(account[previous]) || 0;
+        Number(item[previous]) || 0;
 
 
 
         let start =
-        Number(account[first]) || 0;
+        Number(item[first]) || 0;
 
 
 
-        let monthlyChange =
+        let monthly =
         current - old;
 
 
@@ -144,7 +244,7 @@ function calculateWealth(){
         let monthlyPercent =
         old
         ?
-        (monthlyChange / old) * 100
+        (monthly / old) * 100
         :
         0;
 
@@ -159,19 +259,34 @@ function calculateWealth(){
 
 
 
-        if(account.Who === "Emma"){
-            emmaTotal += current;
+        let category =
+        getAssetType(
+            item["Type of Savings"] || ""
+        );
+
+
+
+        assetTotals[category] += current;
+
+
+
+        if(item.Who === "Emma"){
+
+            emma += current;
+
         }
 
 
-        if(account.Who === "Lee"){
-            leeTotal += current;
+
+        if(item.Who === "Lee"){
+
+            lee += current;
+
         }
 
 
 
-        jointTotal += current;
-
+        joint += current;
 
 
 
@@ -182,29 +297,31 @@ function calculateWealth(){
 
         row.innerHTML = `
 
-        <td>${account.Who}</td>
+<td>${item.Who}</td>
 
-        <td>${account.Account}</td>
+<td>${item.Account}</td>
 
-        <td>${account["Type of Savings"]}</td>
+<td>${item["Type of Savings"]}</td>
 
-        <td>
-        £${current.toLocaleString()}
-        </td>
+<td>${category}</td>
 
-        <td>
-        £${monthlyChange.toLocaleString()}
-        </td>
+<td>
+£${current.toLocaleString()}
+</td>
 
-        <td>
-        ${monthlyPercent.toFixed(2)}%
-        </td>
+<td>
+£${monthly.toLocaleString()}
+</td>
 
-        <td>
-        ${totalPercent.toFixed(2)}%
-        </td>
+<td>
+${monthlyPercent.toFixed(2)}%
+</td>
 
-        `;
+<td>
+${totalPercent.toFixed(2)}%
+</td>
+
+`;
 
 
 
@@ -217,35 +334,42 @@ function calculateWealth(){
     document
     .getElementById("emmaWealth")
     .innerHTML =
-    "£" + emmaTotal.toLocaleString();
+    "£" + emma.toLocaleString();
 
 
 
     document
     .getElementById("leeWealth")
     .innerHTML =
-    "£" + leeTotal.toLocaleString();
+    "£" + lee.toLocaleString();
 
 
 
     document
     .getElementById("jointWealth")
     .innerHTML =
-    "£" + jointTotal.toLocaleString();
+    "£" + joint.toLocaleString();
 
 
 
-    let totalMonthly =
+
+
+    let monthlyChange =
     rows.reduce(
-        (sum,item)=>{
+        (total,item)=>{
+
 
             let current =
             Number(item[latest]) || 0;
 
+
             let old =
             Number(item[previous]) || 0;
 
-            return sum + (current-old);
+
+            return total +
+            (current-old);
+
 
         },0
     );
@@ -253,9 +377,11 @@ function calculateWealth(){
 
 
     let monthlyPercent =
-    jointTotal-totalMonthly
+    joint-monthlyChange
     ?
-    (totalMonthly/(jointTotal-totalMonthly))*100
+    (monthlyChange /
+    (joint-monthlyChange))
+    *100
     :
     0;
 
@@ -265,6 +391,13 @@ function calculateWealth(){
     .getElementById("monthlyChange")
     .innerHTML =
     monthlyPercent.toFixed(2)+"%";
+
+
+
+    console.log(
+        "Asset breakdown:",
+        assetTotals
+    );
 
 
 }
