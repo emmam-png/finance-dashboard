@@ -1,157 +1,245 @@
-function ukDate(v){
+function ukDate(value){
 
-let p=v.split("/");
+    let parts = value.split("/");
 
-let y=p[2];
+    let day = Number(parts[0]);
+    let month = Number(parts[1]) - 1;
+    let year = Number(parts[2]);
 
-if(y.length===2){
-y="20"+y;
-}
+    if(year < 100){
+        year += 2000;
+    }
 
-
-return new Date(
-y,
-p[1]-1,
-p[0]
-);
+    return new Date(year, month, day);
 
 }
-
-
 
 
 
 function calculateWealth(){
 
 
-let data=financeData.savings;
+    let data = financeData.savings;
 
 
-if(!data.length)return;
-
-
-
-let columns=
-Object.keys(data[0]);
+    if(!data.length){
+        return;
+    }
 
 
 
-let dates=
-columns.filter(x=>{
-
-return ![
-"Who",
-"Account",
-"Type of Savings",
-"2025 CHANGE",
-"2025 % CHANGE"
-].includes(x);
-
-});
+    let columns =
+    Object.keys(data[0]);
 
 
 
-dates.sort(
-(a,b)=>ukDate(a)-ukDate(b)
-);
+    let dates =
+    columns.filter(col => {
+
+        return col.includes("/");
+
+    });
 
 
 
-let latest=
-dates[dates.length-1];
-
-
-let previous=
-dates[dates.length-2];
-
-
-
-let emma=0;
-let lee=0;
+    dates.sort(
+        (a,b)=>
+        ukDate(a)-ukDate(b)
+    );
 
 
 
-let table=
-document.getElementById(
-"wealthTable"
-);
+    let latest =
+    dates[dates.length-1];
+
+
+    let previous =
+    dates[dates.length-2];
+
+
+    let first =
+    dates[0];
 
 
 
-table.innerHTML="";
+    console.log(
+        "Latest:",
+        latest,
+        "Previous:",
+        previous
+    );
 
 
 
-data.forEach(r=>{
-
-
-let value=
-Number(r[latest])||0;
-
-
-let old=
-Number(r[previous])||0;
+    let emma = 0;
+    let lee = 0;
 
 
 
-let percent=
-old?
-((value-old)/old)*100:
-0;
+    let monthlyDifference = 0;
+    let previousTotal = 0;
 
 
 
-if(r.Who==="Emma")
-emma+=value;
-
-
-if(r.Who==="Lee")
-lee+=value;
-
-
-
-let row=
-table.insertRow();
+    let table =
+    document.getElementById(
+        "wealthTable"
+    );
 
 
 
-row.innerHTML=`
+    table.innerHTML = `
 
-<td>${r.Who}</td>
-
-<td>${r.Account}</td>
-
-<td>${r["Type of Savings"]}</td>
-
-<td>${r["Type of Savings"]}</td>
-
-<td>£${value.toLocaleString()}</td>
-
-<td>${percent.toFixed(2)}%</td>
+<tr>
+<th>Owner</th>
+<th>Account</th>
+<th>Type</th>
+<th>Current Value</th>
+<th>Monthly Change</th>
+<th>Monthly %</th>
+<th>Total Growth %</th>
+</tr>
 
 `;
 
-});
 
 
-document
-.getElementById("emmaWealth")
-.innerHTML=
-"£"+emma.toLocaleString();
+    data.forEach(account=>{
 
 
-
-document
-.getElementById("leeWealth")
-.innerHTML=
-"£"+lee.toLocaleString();
+        let current =
+        Number(account[latest]) || 0;
 
 
 
-document
-.getElementById("jointWealth")
-.innerHTML=
-"£"+(emma+lee).toLocaleString();
+        let old =
+        Number(account[previous]) || 0;
+
+
+
+        let start =
+        Number(account[first]) || 0;
+
+
+
+        let change =
+        current-old;
+
+
+
+        let monthlyPercent =
+        old
+        ?
+        (change/old)*100
+        :
+        0;
+
+
+
+        let growth =
+        start
+        ?
+        ((current-start)/start)*100
+        :
+        0;
+
+
+
+        monthlyDifference += change;
+
+        previousTotal += old;
+
+
+
+        if(account.Who==="Emma"){
+            emma += current;
+        }
+
+
+
+        if(account.Who==="Lee"){
+            lee += current;
+        }
+
+
+
+        let row =
+        table.insertRow();
+
+
+
+        row.innerHTML = `
+
+<td>${account.Who}</td>
+
+<td>${account.Account}</td>
+
+<td>${account["Type of Savings"]}</td>
+
+<td>
+£${current.toLocaleString()}
+</td>
+
+<td>
+£${change.toLocaleString()}
+</td>
+
+<td>
+${monthlyPercent.toFixed(2)}%
+</td>
+
+<td>
+${growth.toFixed(2)}%
+</td>
+
+`;
+
+
+
+    });
+
+
+
+    let joint =
+    emma + lee;
+
+
+
+    document
+    .getElementById("emmaWealth")
+    .innerHTML =
+    "£"+emma.toLocaleString();
+
+
+
+    document
+    .getElementById("leeWealth")
+    .innerHTML =
+    "£"+lee.toLocaleString();
+
+
+
+    document
+    .getElementById("jointWealth")
+    .innerHTML =
+    "£"+joint.toLocaleString();
+
+
+
+
+    let householdMonthly =
+    previousTotal
+    ?
+    (monthlyDifference / previousTotal)*100
+    :
+    0;
+
+
+
+    document
+    .getElementById("monthlyChange")
+    .innerHTML =
+    householdMonthly.toFixed(2)+"%";
 
 
 
