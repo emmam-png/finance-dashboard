@@ -16,6 +16,8 @@ function ukDate(value){
 
 
 
+
+
 function calculateWealth(){
 
 
@@ -28,13 +30,11 @@ function calculateWealth(){
 
 
 
-    let columns =
-    Object.keys(data[0]);
+    let columns = Object.keys(data[0]);
 
 
 
-    let dates =
-    columns.filter(col => {
+    let dates = columns.filter(col => {
 
         return col.includes("/");
 
@@ -43,64 +43,38 @@ function calculateWealth(){
 
 
     dates.sort(
-        (a,b)=>
-        ukDate(a)-ukDate(b)
+        (a,b)=>ukDate(a)-ukDate(b)
     );
 
 
 
-    let latest =
-    dates[dates.length-1];
+    let latest = dates[dates.length-1];
 
+    let previous = dates[dates.length-2];
 
-    let previous =
-    dates[dates.length-2];
-
-
-    let first =
-    dates[0];
-
-
-
-    console.log(
-        "Latest:",
-        latest,
-        "Previous:",
-        previous
-    );
+    let first = dates[0];
 
 
 
     let emma = 0;
+
     let lee = 0;
 
+    let monthlyChange = 0;
 
-
-    let monthlyDifference = 0;
     let previousTotal = 0;
 
 
 
-    let table =
-    document.getElementById(
-        "wealthTable"
+    // ONLY update tbody
+
+    let tbody =
+    document.querySelector(
+        "#wealthTable tbody"
     );
 
 
-
-    table.innerHTML = `
-
-<tr>
-<th>Owner</th>
-<th>Account</th>
-<th>Type</th>
-<th>Current Value</th>
-<th>Monthly Change</th>
-<th>Monthly %</th>
-<th>Total Growth %</th>
-</tr>
-
-`;
+    tbody.innerHTML = "";
 
 
 
@@ -123,14 +97,14 @@ function calculateWealth(){
 
 
         let change =
-        current-old;
+        current - old;
 
 
 
         let monthlyPercent =
         old
         ?
-        (change/old)*100
+        (change / old) * 100
         :
         0;
 
@@ -145,7 +119,7 @@ function calculateWealth(){
 
 
 
-        monthlyDifference += change;
+        monthlyChange += change;
 
         previousTotal += old;
 
@@ -156,7 +130,6 @@ function calculateWealth(){
         }
 
 
-
         if(account.Who==="Lee"){
             lee += current;
         }
@@ -164,7 +137,7 @@ function calculateWealth(){
 
 
         let row =
-        table.insertRow();
+        tbody.insertRow();
 
 
 
@@ -176,27 +149,21 @@ function calculateWealth(){
 
 <td>${account["Type of Savings"]}</td>
 
-<td>
-£${current.toLocaleString()}
-</td>
+<td>£${current.toLocaleString()}</td>
 
-<td>
-£${change.toLocaleString()}
-</td>
+<td>£${change.toLocaleString()}</td>
 
-<td>
-${monthlyPercent.toFixed(2)}%
-</td>
+<td>${monthlyPercent.toFixed(2)}%</td>
 
-<td>
-${growth.toFixed(2)}%
-</td>
+<td>${growth.toFixed(2)}%</td>
 
 `;
 
 
 
     });
+
+
 
 
 
@@ -226,11 +193,10 @@ ${growth.toFixed(2)}%
 
 
 
-
-    let householdMonthly =
+    let householdPercent =
     previousTotal
     ?
-    (monthlyDifference / previousTotal)*100
+    (monthlyChange / previousTotal)*100
     :
     0;
 
@@ -239,8 +205,7 @@ ${growth.toFixed(2)}%
     document
     .getElementById("monthlyChange")
     .innerHTML =
-    householdMonthly.toFixed(2)+"%";
-
+    householdPercent.toFixed(2)+"%";
 
 
 }
