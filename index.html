@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Finance Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>💰 Finance Dashboard</h1>
+    <p>Your personal savings tracker</p>
+</header>
+
+
+<section class="cards">
+
+<div class="card">
+<h3>Total Savings</h3>
+<h2>£24,150</h2>
+</div>
+
+
+<div class="card">
+<h3>This Month</h3>
+<h2>+£635</h2>
+</div>
+
+
+<div class="card">
+<h3>Goals</h3>
+<h2>3 Active</h2>
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<h2>Savings Growth</h2>
+
+<canvas id="savingsChart"></canvas>
+
+</section>
+
+
+<section class="goals">
+
+<h2>Savings Goals</h2>
+
+
+<div class="goal">
+
+<p>🏖 Holiday</p>
+
+<div class="progress">
+<span style="width:80%"></span>
+</div>
+
+<p>£4,800 / £6,000</p>
+
+</div>
+
+
+
+<div class="goal">
+
+<p>🚗 New Car</p>
+
+<div class="progress">
+<span style="width:55%"></span>
+</div>
+
+<p>£5,500 / £10,000</p>
+
+</div>
+
+
+
+<div class="goal">
+
+<p>🏡 House Deposit</p>
+
+<div class="progress">
+<span style="width:35%"></span>
+</div>
+
+<p>£12,300 / £35,000</p>
+
+</div>
+
+
+</section>
+
+
+
+<section class="panel">
+
+<h2>Recent Transactions</h2>
+
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Description</th>
+<th>Amount</th>
+</tr>
+
+
+<tr>
+<td>23/07/2026</td>
+<td>Monthly Savings</td>
+<td>£500</td>
+</tr>
+
+
+<tr>
+<td>15/07/2026</td>
+<td>Holiday Fund</td>
+<td>£100</td>
+</tr>
+
+
+<tr>
+<td>01/07/2026</td>
+<td>Interest</td>
+<td>£35</td>
+</tr>
+
+
+</table>
+
+
+</section>
+
+
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
