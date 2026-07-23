@@ -122,12 +122,10 @@ accounts[key];
 
 // Sort by date
 
+
 account.sort(
-(a,b)=>
-new Date(a["Monthly Dates"])
-account[0].Date
--
-new Date(b.Date)
+(a,b) =>
+new Date(a["Monthly Dates"]) - new Date(b["Monthly Dates"])
 );
 
 
