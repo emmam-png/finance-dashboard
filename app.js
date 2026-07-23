@@ -1,10 +1,9 @@
 let chart;
 
 
-function createChart(values){
+function makeChart(labels, data){
 
-const ctx = document
-.getElementById("savingsChart");
+const ctx = document.getElementById("savingsChart");
 
 
 if(chart){
@@ -18,22 +17,25 @@ type:"line",
 
 data:{
 
-labels:values.labels,
+labels:labels,
 
 datasets:[{
 
-label:"Savings",
+label:"Savings Balance",
 
-data:values.data,
+data:data,
 
-tension:.4
+tension:0.4
 
 }]
 
+},
+
+options:{
+responsive:true
 }
 
 });
-
 
 }
 
@@ -53,8 +55,7 @@ const reader=new FileReader();
 reader.onload=function(event){
 
 
-const workbook =
-XLSX.read(
+const workbook = XLSX.read(
 event.target.result,
 {
 type:"binary"
@@ -63,39 +64,56 @@ type:"binary"
 
 
 
-const sheet =
-workbook.Sheets[
-workbook.SheetNames[0]
-];
-
-
-const data =
-XLSX.utils.sheet_to_json(sheet);
+console.log(workbook.SheetNames);
 
 
 
-console.log(data);
+/*
+=========================
+SAVINGS TAB
+=========================
+*/
+
+
+if(workbook.SheetNames.includes("Savings")){
+
+
+const savingsSheet =
+workbook.Sheets["Savings"];
+
+
+const savings =
+XLSX.utils.sheet_to_json(
+savingsSheet
+);
 
 
 
-let totalSavings=0;
-
-
-let dates=[];
-let amounts=[];
+console.log("Savings", savings);
 
 
 
-data.forEach(row=>{
+let total=0;
+
+let labels=[];
+let values=[];
 
 
-if(row.Category==="Savings"){
 
-totalSavings += Number(row.Amount);
+savings.forEach(row=>{
 
-dates.push(row.Date);
 
-amounts.push(totalSavings);
+// Change this if your column names differ
+
+if(row.Amount){
+
+total += Number(row.Amount);
+
+labels.push(
+row.Date || ""
+);
+
+values.push(total);
 
 }
 
@@ -106,21 +124,96 @@ amounts.push(totalSavings);
 
 document.querySelector(".card h2")
 .innerHTML =
-"£"+totalSavings;
+"£"+total.toLocaleString();
 
 
 
-createChart({
+makeChart(
+labels,
+values
+);
 
-labels:dates,
 
-data:amounts
+}
 
-});
+
+
+/*
+=========================
+MONTHLY OUTGOINGS
+=========================
+*/
+
+
+if(workbook.SheetNames.includes("Monthly Outgoings")){
+
+
+const outgoings =
+XLSX.utils.sheet_to_json(
+workbook.Sheets["Monthly Outgoings"]
+);
+
+
+console.log(
+"Outgoings",
+outgoings
+);
+
+}
+
+
+
+/*
+=========================
+LEE BUDGET
+=========================
+*/
+
+
+if(workbook.SheetNames.includes("Lee's Budget")){
+
+
+const lee =
+XLSX.utils.sheet_to_json(
+workbook.Sheets["Lee's Budget"]
+);
+
+
+console.log(
+"Lee Budget",
+lee
+);
+
+}
+
+
+
+/*
+=========================
+EMMA BUDGET
+=========================
+*/
+
+
+if(workbook.SheetNames.includes("Emma's Budget")){
+
+
+const emma =
+XLSX.utils.sheet_to_json(
+workbook.Sheets["Emma's Budget"]
+);
+
+
+console.log(
+"Emma Budget",
+emma
+);
+
+}
+
 
 
 };
-
 
 
 reader.readAsBinaryString(file);
