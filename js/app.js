@@ -1,14 +1,10 @@
-//wealth logic
-// Household Finance Dashboard
-// Main Excel loader
-
-
 let financeData = {
 
-    savings: [],
-    emmasBudget: [],
-    leesBudget: [],
-    outgoings: []
+savings:[],
+income:[],
+outgoings:[],
+leeBudget:[],
+emmaBudget:[]
 
 };
 
@@ -16,115 +12,75 @@ let financeData = {
 
 document
 .getElementById("excelFile")
-.addEventListener("change", function(e){
+.addEventListener("change",function(e){
 
 
-const file = e.target.files[0];
+let file=e.target.files[0];
 
 
-if(!file){
-    return;
-}
-
-
-const reader = new FileReader();
+let reader=new FileReader();
 
 
 
-reader.onload = function(event){
+reader.onload=function(event){
 
 
-const workbook = XLSX.read(
-    event.target.result,
-    {
-        type:"binary"
-    }
+let workbook=XLSX.read(
+event.target.result,
+{type:"binary"}
 );
 
 
 
 console.log(
-    "Sheets:",
-    workbook.SheetNames
+"Sheets:",
+workbook.SheetNames
 );
 
 
-
-// Load Savings
-
-if(workbook.Sheets["Savings"]){
 
 financeData.savings =
 XLSX.utils.sheet_to_json(
-    workbook.Sheets["Savings"]
+workbook.Sheets["Savings"]
 );
 
-}
 
 
-
-// Load Emma Budget
-
-if(workbook.Sheets["Emma's Budget"]){
-
-financeData.emmaBudget =
+financeData.income =
 XLSX.utils.sheet_to_json(
-    workbook.Sheets["Emma's Budget"]
+workbook.Sheets["Income"]
 );
 
-}
 
-
-
-// Load Lee Budget
-
-if(workbook.Sheets["Lee's Budget"]){
-
-financeData.leeBudget =
-XLSX.utils.sheet_to_json(
-    workbook.Sheets["Lee's Budget"]
-);
-
-}
-
-
-
-// Load Outgoings
-
-if(workbook.Sheets["Outgoings"]){
 
 financeData.outgoings =
 XLSX.utils.sheet_to_json(
-    workbook.Sheets["Outgoings"]
+workbook.Sheets["Outgoings"]
 );
 
-}
+
+
+financeData.leeBudget =
+XLSX.utils.sheet_to_json(
+workbook.Sheets["Lees Budget"]
+);
+
+
+
+financeData.emmaBudget =
+XLSX.utils.sheet_to_json(
+workbook.Sheets["Emmas Budget"]
+);
 
 
 
 console.log(
-    "Finance data loaded:",
-    financeData
+financeData
 );
 
 
 
-// Run dashboard updates
-
-if(typeof calculateWealth === "function"){
-    calculateWealth();
-}
-
-
-if(typeof calculateIncome === "function"){
-    calculateIncome();
-}
-
-
-if(typeof createCharts === "function"){
-    createCharts();
-}
-
+calculateWealth();
 
 
 };
@@ -139,20 +95,18 @@ reader.readAsBinaryString(file);
 
 
 
-function showTab(tabName){
+function showTab(id){
 
 
 document
 .querySelectorAll(".tab")
-.forEach(tab=>{
-
-    tab.style.display="none";
-
+.forEach(t=>{
+t.style.display="none";
 });
 
 
 document
-.getElementById(tabName)
+.getElementById(id)
 .style.display="block";
 
 
@@ -160,13 +114,8 @@ document
 
 
 
-// Show dashboard first
-
-document
-.addEventListener(
-"DOMContentLoaded",
-function(){
+window.onload=function(){
 
 showTab("dashboard");
 
-});
+}
